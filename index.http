@@ -1,0 +1,97 @@
+###
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+    {
+        "email": "prueba@gmail.com",
+        "password": "Abcd1234"
+    }
+
+###
+GET http://localhost:3000/api/users
+
+###
+GET http://localhost:3000/api/user/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OGU2NTMxZmU1MjExYTViZGIwYTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQ1NDA2OSwiZXhwIjoxNzQzNDYxMjY5fQ.9ohjUZ93rotco31DC8yy4fdGBA6tyDP0kAnRKinvFnQ
+
+###
+DELETE http://localhost:3000/api/users/pepe@gmail.com
+
+###
+DELETE http://localhost:3000/api/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMDYzNGE2ZGVmMzE5NGI2Nzc0NDIiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQ1NTgwNywiZXhwIjoxNzQzNDYzMDA3fQ.adOXNoBWjDckzR06SY0Ta9xY1r3ksLk1PNrlpsR9lgE
+
+
+###
+DELETE http://localhost:3000/api/user?soft=false
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMDYzNGE2ZGVmMzE5NGI2Nzc0NDIiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQ1NTgwNywiZXhwIjoxNzQzNDYzMDA3fQ.adOXNoBWjDckzR06SY0Ta9xY1r3ksLk1PNrlpsR9lgE
+
+
+###
+PUT http://localhost:3000/api/users/verify
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OGU2NTMxZmU1MjExYTViZGIwYTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzM1OTg0MCwiZXhwIjoxNzQzMzY3MDQwfQ.49nGRBbwslRU4Vqs_2BjqWhg3836nO2088QmFRC5Doc
+
+{
+    "code": 230484
+}
+
+###
+PUT http://localhost:3000/api/auth/personaldata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OGZmOWMxMTBlOWU4MDkzNTc1NDUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQxODcyNSwiZXhwIjoxNzQzNDI1OTI1fQ.M6STti6_eB8j88kkTekVsp7c1R1Mm8UxUdYHuGQqc2I
+
+{
+    "nombre": "Pepe",
+    "apellidos": "García Pérez",
+    "nif": "12345678A"
+}
+
+
+###
+POST http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+    {
+        "email": "pepa@gmail.com",
+        "password": "Abcd1234"
+    }
+
+
+###
+PUT http://localhost:3000/api/auth/company
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OGU2NTMxZmU1MjExYTViZGIwYTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQ0MTIzNywiZXhwIjoxNzQzNDQ4NDM3fQ.uOStzLTsvdZx5ZgAPio6or1aEQlDNCVGzhwZwelRuxE
+
+{
+    "nombre": "Mi Empresa S.L.",
+    "cif": "B12345678",
+    "direccion": "Calle Ejemplo 123, Madrid"
+}
+
+### 
+PATCH http://localhost:3000/api/user/logo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OGU2NTMxZmU1MjExYTViZGIwYTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MzQ1NDA2OSwiZXhwIjoxNzQzNDYxMjY5fQ.9ohjUZ93rotco31DC8yy4fdGBA6tyDP0kAnRKinvFnQ
+Content-Type: multipart/form-data; boundary=boundary123
+
+--boundary123
+Content-Disposition: form-data; name="logo"; filename="LogoUTAD.jpg"
+Content-Type: image/jpeg
+
+< ./LogoUTAD.jpg
+--boundary123--
+
+
+
+###
+POST http://localhost:3000/mail
+Content-Type: application/json
+
+    {
+        "subject": "prueba",
+        "text": "esto es una prueba",
+        "to": "agathamartinv@gmail.com",
+        "from": "agathamartinv@gmail.com"
+
+    }
+
