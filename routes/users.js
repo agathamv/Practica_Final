@@ -1,23 +1,39 @@
-const express = require('express')
-const {getItem, getItems, verifyEmail, updateItem, createItem, deleteItem, updateLogoCtrl, getUserCtrl} = require ('../controllers/users.js')
-
-
-const {validatorCreateItem, validatorGetItem, validatorValidateCode} = require("../validators/users");
-
+const express = require('express');
 const router = express.Router();
+const { authMiddleware } = require('../middlewares/authMiddleware'); // Check path
+const { uploadMiddlewareMemory } = require('../utils/handleStorage'); // Check path
 
-router.get("/me", getUserCtrl);
-//router.get('/:email', validatorGetItem, getItem);
-router.get('/', getItems);
+const {validatorRegister, validatorLogin, validatorVerify, validatorUpdatePersonal, validatorCompany} = require('../validators/users'); // Check path
+
+const { registerCtrl, loginCtrl, verifyEmailCtrl, updatePersonalCtrl, updateCompanyCtrl, updateLogoCtrl, getMyProfileCtrl, deleteMyAccountCtrl} = require('../controllers/users'); // Check path
 
 
-router.post("/", validatorCreateItem, createItem);
-router.put("/verify", validatorValidateCode, verifyEmail); 
-router.patch("/logo", updateLogoCtrl);
 
-router.put('/:email', validatorGetItem, updateItem);
-router.delete('/', deleteItem);
+router.post("/register", validatorRegister, registerCtrl);
+
+
+router.post("/login", validatorLogin, loginCtrl);
+
+
+router.put("/validation", authMiddleware, validatorVerify, verifyEmailCtrl);
+
+
+
+router.put("/personal", authMiddleware, validatorUpdatePersonal, updatePersonalCtrl);
+
+
+router.patch("/company", authMiddleware, validatorCompany, updateCompanyCtrl);
+
+
+router.patch("/logo",
+    authMiddleware,
+    uploadMiddlewareMemory.single("logo"), 
+    updateLogoCtrl
+);
+
+router.get("/me", authMiddleware, getMyProfileCtrl);
+
+router.delete("/me", authMiddleware, deleteMyAccountCtrl);
+
 
 module.exports = router;
-
-

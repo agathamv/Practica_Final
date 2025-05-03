@@ -1,59 +1,84 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const mongoose_delete = require('mongoose-delete');
+
+const CompanySchema = new mongoose.Schema({
+    nombre: { type: String },
+    cif: {
+        type: String,
+        unique: true
+    },
+    street: { type: String },
+    number: { type: String }, 
+    postal: { type: String },
+    city: { type: String },
+    province: { type: String },
+}, { _id: false });
+
+
 const UsersModel = new mongoose.Schema(
     {
         email: {
             type: String,
             unique: true,
+            required: true,
         },
-        password:{
-            type: String 
-        },
-        codigo:{ //codigo de verificacion
-            type:Number,
-        },
-        intentos:{ //intentos de verificacion
-            type:Number,
-            default: 3
-        },
-        status:{ //estado de verificacion
-            type:Boolean,
-            default: false
-        },
-        role:{
+        password: {
             type: String,
-            enum: ["user", "admin"],
+            select: false
+        },
+        codigo: {
+            type: String,
+            select: false
+        },
+        intentos: {
+            type: Number,
+            default: 3,
+            select: false
+        },
+        status: {
+            type: Boolean,
+            default: false 
+        },
+        role: {
+            type: String,
+            enum: ["user", "autonomo", "inivtado"],
             default: "user"
         },
-        nombre:{
+        nombre: {
             type: String,
         },
-        apellidos:{
+        apellidos: {
             type: String,
         },
-        nif:{
+        nif: {
             type: String,
         },
-        company:{
-            nombre:{
-                type: String,
-            },
-            cif:{
-                type: String,
-            },
-            direccion:{
-                type: String,
-            }
+        company: {
+            type: CompanySchema,
+            default: null 
         },
-        deleted:{
-            type: Boolean,
-            default: false
+        logo: {
+            type: String
         }
-
+        //deleted: {
+        //    type: Boolean,
+        //    default: false,
+        //    select: false
+        //}
     },
     {
         timestamps: true,
         versionKey: false
     }
-)
+);
 
-module.exports = mongoose.model("users", UsersModel) 
+
+UsersModel.plugin(mongoose_delete, {
+    overrideMethods: 'all',
+    deletedAt: true,
+    indexFields: ['deleted', 'deletedAt'] // Opcional: Indexar campos para mejor rendimiento
+});
+
+
+
+module.exports = mongoose.model("users", UsersModel);

@@ -12,16 +12,17 @@ const tokenSign = (user) => {
         {
             expiresIn: "2h"
         }
-    )
+    );
 
-return sign
-}
+    return sign
+};
 
 const verifyToken = (tokenJwt) => {
     try {
         return jwt.verify(tokenJwt, JWT_SECRET)
     }catch(err) {
-        console.log(err)
+        return null;
+        //console.log(err)
     }
 }
 
