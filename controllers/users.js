@@ -5,6 +5,8 @@ const { tokenSign } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
 const { uploadToPinata } = require("../utils/handleUploadIPFS");
 
+const crypto = require('crypto'); // Import crypto for token generation
+const { sendEmail } = require('../utils/handleMails'); // Assuming email utility exists
 
 const registerCtrl = async (req, res) => {
     try {
@@ -257,6 +259,232 @@ const deleteMyAccountCtrl = async (req, res) => {
 };
 
 
+const forgotPasswordCtrl = async (req, res) => {
+    try {
+        const { email } = matchedData(req);
+        const user = await usersModel.findOne({ email: email, status: true }); // Find active user
+
+        if (!user) {
+            // Security: Don't reveal if user exists. Send success response anyway.
+            console.log(`Password reset requested for non-existent or inactive email: ${email}`);
+            return res.status(200).json({ message: "PASSWORD_RESET_LINK_SENT_IF_ACCOUNT_EXISTS" });
+        }
+
+        // Generate Token
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const resetTokenExpires = Date.now() + 3600000; // 1 hour expiry
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = resetTokenExpires;
+        await user.save();
+
+        console.log(`Reset token generated and saved for user: ${user.email}`);
+
+        // Send Email (Replace with your actual frontend URL)
+        const resetUrl = `'http://localhost:4000'}/reset-password?token=${resetToken}`;
+        
+         // **** Log the URL to the Console Instead of Sending Email ****
+         console.log("----- SIMULATED PASSWORD RESET EMAIL -----");
+         console.log("To:", user.email);
+         console.log("Reset URL:", resetUrl); // Log the full link
+         console.log("Reset Token:", resetToken); // Log the token separately for easy copying
+         console.log("------------------------------------------");
+        /*const emailOptions = {
+            to: user.email,
+            from: process.env.EMAIL || 'noreply@example.com', // Configure sender
+            subject: 'Password Reset Request',
+            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n This link expires in 1 hour.`
+            // html: '...' // Optional HTML version
+        };
+        */
+
+        res.status(200).json({ message: "PASSWORD_RESET_LINK_GENERATED_CHECK_CONSOLE_IF_EXISTS" });
+
+        /*
+        try {
+            await sendEmail(emailOptions);
+            console.log(`Password reset email sent to ${user.email}`);
+            
+            
+            await user.save(); // Save the token and expiry
+            
+            
+            res.status(200).json({ message: "PASSWORD_RESET_LINK_SENT_IF_ACCOUNT_EXISTS" });
+        } catch(emailError) {
+             console.error("ERROR SENDING RESET EMAIL:", emailError);
+             // Even if email fails, don't reveal it to the user potentially. Log it.
+             // Maybe reset the token fields?
+             //user.resetPasswordToken = undefined;
+             //user.resetPasswordExpires = undefined;
+             //await user.save();
+
+             // Return generic error or the same success message? Let's return error here.
+             handleHttpError(res, "ERROR_SENDING_RESET_EMAIL", 500);
+        }
+        */
+
+    } catch (err) {
+        console.error("FORGOT PASSWORD CTRL ERROR:", err);
+        handleHttpError(res, "ERROR_PROCESSING_PASSWORD_RESET_REQUEST", 500);
+    }
+};
+
+
+const resetPasswordCtrl = async (req, res) => {
+    try {
+        const { token, password } = matchedData(req);
+
+        // Find user by token and check expiry
+        const user = await usersModel.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() } // Check if expiry is in the future
+        });
+
+        if (!user) {
+            return handleHttpError(res, "PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED", 400); // Use 400 Bad Request
+        }
+
+        // Set the new password
+        user.password = await encrypt(password);
+        // Clear the reset token fields
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+
+        // Optionally: Send a confirmation email
+        // await sendEmail(...)
+
+        res.status(200).json({ message: "PASSWORD_RESET_SUCCESSFUL" });
+
+    } catch (err) {
+        console.error("RESET PASSWORD CTRL ERROR:", err);
+        handleHttpError(res, "ERROR_RESETTING_PASSWORD", 500);
+    }
+};
+
+
+
+const inviteGuestCtrl = async (req, res) => {
+    try {
+        const { email: inviteeEmail } = matchedData(req); // Email of the person to invite
+        const inviter = req.user; // User sending the invitation (from authMiddleware)
+
+        // Check if inviter has company data (adjust condition as needed)
+        if (!inviter.company || !inviter.company.cif) { // Example check
+            return handleHttpError(res, "INVITER_MUST_HAVE_COMPANY_INFO_TO_INVITE", 403); // Forbidden
+        }
+
+        // Validator already checks if inviteeEmail exists. Handle error if it slips through.
+        const existingUser = await usersModel.findOne({ email: inviteeEmail });
+        if (existingUser) {
+             return handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409); // Conflict
+        }
+
+        // Generate Invitation Token
+        const inviteToken = crypto.randomBytes(20).toString('hex');
+        const inviteTokenExpires = Date.now() + (3 * 24 * 3600000); // 3 days expiry? Configurable
+
+        // Create the guest user document
+        const guestUser = new usersModel({
+            email: inviteeEmail,
+            status: false, 
+            role: 'invitado',
+            company: inviter.company, 
+            invitationToken: inviteToken,
+            invitationExpires: inviteTokenExpires,
+            invitedBy: inviter._id 
+        });
+
+        await guestUser.save();
+
+        
+        const acceptUrl = `'http://localhost:3000'}/accept-invitation?token=${inviteToken}`;
+        
+        console.log("----- SIMULATED INVITATION EMAIL -----");
+        console.log("To:", inviteeEmail);
+        console.log("From:", inviter.email);
+        console.log("Accept URL:", acceptUrl);
+        console.log("Invite Token:", inviteToken);
+        console.log("--------------------------------------");
+
+        /*
+        const emailOptions = {
+            to: inviteeEmail,
+            from: process.env.EMAIL_FROM || 'noreply@example.com',
+            subject: `Invitation to join ${inviter.company.nombre || 'the team'}`,
+            text: `You have been invited by ${inviter.nombre || inviter.email} to join ${inviter.company.nombre || 'their team'} as a guest.\n\nPlease click on the following link to accept the invitation and set up your account:\n\n${acceptUrl}\n\nIf you did not expect this invitation, please ignore this email.\nThis link expires in 3 days.`
+            // html: '...'
+        };
+
+         try {
+            await sendEmail(emailOptions);
+            console.log(`Invitation email sent to ${inviteeEmail}`);
+             res.status(200).json({ message: "INVITATION_SENT_SUCCESSFULLY" });
+        } catch(emailError) {
+             console.error("ERROR SENDING INVITATION EMAIL:", emailError);
+             // Important: If email fails, should we delete the guest user created?
+             try { await usersModel.deleteOne({ _id: guestUser._id }); } catch (delErr) {} // Attempt cleanup
+             handleHttpError(res, "ERROR_SENDING_INVITATION_EMAIL", 500);
+        }
+        */
+
+        res.status(200).json({ message: "INVITATION_GENERATED_CHECK_CONSOLE" });
+
+    } catch (err) {
+        console.error("INVITE GUEST CTRL ERROR:", err);
+         if (err.code === 11000) { // Handle potential race condition for duplicate email
+             handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409);
+         } else {
+             handleHttpError(res, "ERROR_PROCESSING_INVITATION", 500);
+         }
+    }
+};
+
+
+
+const acceptInvitationCtrl = async (req, res) => {
+    try {
+        const { token, password, name, surnames } = matchedData(req); // Token and new password from body
+
+        // Find guest user by token and check expiry
+        const guestUser = await usersModel.findOne({
+            invitationToken: token,
+            invitationExpires: { $gt: Date.now() }
+        }).select('+invitationToken +invitationExpires'); // Select fields for clearing
+
+        if (!guestUser) {
+            return handleHttpError(res, "INVITATION_TOKEN_INVALID_OR_EXPIRED", 400);
+        }
+
+        // Set password and activate user
+        guestUser.password = await encrypt(password);
+        guestUser.status = true; // Activate the user
+        // Optionally update name/surnames if provided
+        if (name) guestUser.nombre = name;
+        if (surnames) guestUser.apellidos = surnames;
+
+        // Clear invitation fields
+        guestUser.invitationToken = undefined;
+        guestUser.invitationExpires = undefined;
+
+        await guestUser.save();
+
+        // Optional: Log the user in immediately by returning a JWT
+        const jwtToken = tokenSign({ _id: guestUser._id, role: guestUser.role });
+
+        res.status(200).json({
+             message: "INVITATION_ACCEPTED_SUCCESSFULLY",
+             token: jwtToken, // Send token for immediate login
+             user: guestUser.toJSON() // Send back user data (toJSON removes sensitive fields)
+        });
+
+    } catch (err) {
+        console.error("ACCEPT INVITATION CTRL ERROR:", err);
+        handleHttpError(res, "ERROR_ACCEPTING_INVITATION", 500);
+    }
+};
+
+
 module.exports = {
     registerCtrl,
     loginCtrl,
@@ -265,5 +493,9 @@ module.exports = {
     updateCompanyCtrl,
     updateLogoCtrl,
     getMyProfileCtrl,     
-    deleteMyAccountCtrl  
+    deleteMyAccountCtrl,
+    forgotPasswordCtrl,
+    resetPasswordCtrl,
+    inviteGuestCtrl,
+    acceptInvitationCtrl  
 };

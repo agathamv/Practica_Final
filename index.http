@@ -1,52 +1,52 @@
-###
+### registrar un nuevo usuario
 POST http://localhost:4000/api/user/register
 Content-Type: application/json
 
     {
-        "email": "pepa@gmail.com",
+        "email": "agathamartinv@gmail.com",
         "password": "Abcd1234"
     }
 
 
-###
+### iniciar sesion
 POST http://localhost:4000/api/user/login HTTP/1.1
 Content-Type: application/json
 
     {
-        "email": "pepa@gmail.com",
+        "email": "agathamartinv@gmail.com",
         "password": "Abcd1234"
     }
 
 
-###
+### validar el usuario con el codigo de validacion
 PUT http://localhost:4000/api/user/validation
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIwNjQxMSwiZXhwIjoxNzQ2MjEzNjExfQ.nHSM-W4axm5pCUrEApigMsVHgcsrEBL8s_SMWJ8rNT0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjMxMTgxOCwiZXhwIjoxNzQ2MzE5MDE4fQ._wvYwd6wyDiWTorkHFGh7rcS19zaZHzTxvGL8zPChyI
 
 {
-    "code": 657901
+    "code": 934217
 }
 
-###
+### mostrar datos de usuario
 GET http://localhost:4000/api/user/me
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIxNjExNSwiZXhwIjoxNzQ2MjIzMzE1fQ.Enu-L-7woDPNoaEsfXjCUof6ax9x0PYwgC3t7q3xLQw
 
-###
+### actualizar datos de usuario
 PUT http://localhost:4000/api/user/personal
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIxNjExNSwiZXhwIjoxNzQ2MjIzMzE1fQ.Enu-L-7woDPNoaEsfXjCUof6ax9x0PYwgC3t7q3xLQw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjMxMTg1OCwiZXhwIjoxNzQ2MzE5MDU4fQ.zgdIGN9as8RIMAmo_Mgk_vLDZ2XD9IxE_7l3STbcvA8
 
 {
-    "nombre": "Pepe",
+    "nombre": "Agatha",
     "apellidos": "García Pérez",
     "nif": "12345678A"
 }
 
 
-###
+### actualizar datos de la empresa
 PATCH http://localhost:4000/api/user/company
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIyMjEzMywiZXhwIjoxNzQ2MjI5MzMzfQ.ZDwbUeuqNmHXAuTfu9fj5S9U6C36VPROWxYLxe2MTPA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjMxMTg1OCwiZXhwIjoxNzQ2MzE5MDU4fQ.zgdIGN9as8RIMAmo_Mgk_vLDZ2XD9IxE_7l3STbcvA8
 
 {
     "company": {
@@ -60,7 +60,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjY
     }
 }
 
-### 
+### subir logo de la empresa
 PATCH http://localhost:4000/api/user/logo
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIyMjEzMywiZXhwIjoxNzQ2MjI5MzMzfQ.ZDwbUeuqNmHXAuTfu9fj5S9U6C36VPROWxYLxe2MTPA
 Content-Type: multipart/form-data; boundary=boundary123
@@ -72,25 +72,174 @@ Content-Type: image/jpeg
 < ./LogoUTAD.jpg
 --boundary123--
 
-###
+###soft delete de usuario
 DELETE http://localhost:4000/api/user/me
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIyMjEzMywiZXhwIjoxNzQ2MjI5MzMzfQ.ZDwbUeuqNmHXAuTfu9fj5S9U6C36VPROWxYLxe2MTPA
 
 
-###
+###hard delete de usuario
 DELETE http://localhost:4000/api/user/me?soft=false
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE0ZmVjYjE0OWZmNmZlMDdkZGQ1Y2YiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjIyMjEzMywiZXhwIjoxNzQ2MjI5MzMzfQ.ZDwbUeuqNmHXAuTfu9fj5S9U6C36VPROWxYLxe2MTPA
 
-
-###
-POST http://localhost:4000/mail
+###contraseña olvidada
+POST http://localhost:4000/api/user/forgot-password
 Content-Type: application/json
 
-    {
-        "subject": "prueba",
-        "text": "esto es una prueba",
-        "to": "agathamartinv@gmail.com",
-        "from": "agathamartinv@gmail.com"
+{
+    "email": "agathamartinv@gmail.com"
+}
 
+
+### resetear contraseña
+POST http://localhost:4000/api/user/reset-password
+Content-Type: application/json
+
+{
+    "token": "68d73fbb99d87e77fd1a46c5326c4ece3c070f2c",
+    "password": "NewABC123"
+}
+
+### enviar invitacion a un nuevo usuario
+POST http://localhost:4000/api/user/invite
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjMxMTg1OCwiZXhwIjoxNzQ2MzE5MDU4fQ.zgdIGN9as8RIMAmo_Mgk_vLDZ2XD9IxE_7l3STbcvA8
+
+{
+    "email": "abc@gmail.com"
+}
+
+
+### aceptar invitacion
+POST http://localhost:4000/api/user/accept-invitation
+Content-Type: application/json
+
+{
+    "token": "38e416d10b3cd6f8697ed7e75868808e912bcf94",
+    "password": "Hola1234",
+    "name": "Invited",
+    "surnames": "Guest User"
+}
+
+
+### inicar sesion con el nuevo usuario invitado
+POST http://localhost:4000/api/user/login
+Content-Type: application/json
+
+{
+    "email": "abc@gmail.com",
+    "password": "GuestPassword456"
+}
+
+### enviar un email
+###POST http://localhost:4000/mail
+###Content-Type: application/json
+
+###{
+###    "subject": "prueba",
+###    "text": "esto es una prueba",
+###    "to": "agathamartinv@gmail.com",
+###    "from": "agathamartinv@gmail.com"
+
+###}
+
+### Cliente nuevo
+POST http://localhost:4000/api/client
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+{
+    "name": "Tech Solutions Inc.",
+    "cif": "B87654321",
+    "address": {
+        "street": "Main Street",
+        "number": "100",
+        "postal": "28001",
+        "city": "Madrid",
+        "province": "Madrid"
     }
+}
 
+### Cliente nuevo (diferente CIF)
+POST http://localhost:4000/api/client
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+{
+  "name": "Innovate Systems",
+  "cif": "A11223344",
+  "address": {
+    "street": "Innovation Parkway",
+    "number": "1",
+    "postal": "08001",
+    "city": "Barcelona",
+    "province": "Barcelona"
+  }
+}
+
+
+### Intento de crear cliente duplicado (mismo CIF para el mismo usuario) - Debería fallar (409)
+POST http://localhost:4000/api/client
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+{
+  "name": "Tech Solutions Inc. Duplicate Attempt",
+  "cif": "B87654321",
+  "address": {
+    "street": "Main Street",
+    "number": "100",
+    "postal": "28001",
+    "city": "Madrid",
+    "province": "Madrid"
+  }
+}
+
+
+### Todos los clientes de un usuario
+GET http://localhost:4000/api/client
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+
+### Un cliente específico por ID
+GET http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+
+### Actualizar un cliente por id cliente
+PUT http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+{
+  "name": "Tech Solutions Inc. (Updated Name)",
+  "address": {
+    "street": "Main Street",
+    "number": "101-B",
+    "postal": "28001",
+    "city": "Madrid",
+    "province": "Madrid"
+  }
+}
+
+
+
+### Soft Delete un cliente
+DELETE http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+
+### todos los clientes archivados de un usuario
+GET http://localhost:4000/api/client/archived
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+
+
+### restaurar un cliente archivado
+PATCH http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be/restore
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+
+
+
+### Hard Delete de un cliente
+DELETE http://localhost:4000/api/client/681755efd0cabd1f9ee5c3c2?hard=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0

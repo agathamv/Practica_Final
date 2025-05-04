@@ -40,12 +40,14 @@ const createTransporter = async () => {
 };
 
 const sendEmail = async (emailOptions) => {
-    try {
+    /*try {
         let emailTransporter = await createTransporter();
         await emailTransporter.sendMail(emailOptions);
     } catch (e) {
         console.log(e)
-    }
+    }*/
+    let emailTransporter = await createTransporter(); // If this fails, it will throw
+    await emailTransporter.sendMail(emailOptions); // If this fails, it will throw
 };
 
 module.exports = { sendEmail }

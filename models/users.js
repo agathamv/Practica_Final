@@ -4,8 +4,7 @@ const mongoose_delete = require('mongoose-delete');
 const CompanySchema = new mongoose.Schema({
     nombre: { type: String },
     cif: {
-        type: String,
-        unique: true
+        type: String
     },
     street: { type: String },
     number: { type: String }, 
@@ -41,7 +40,7 @@ const UsersModel = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["user", "autonomo", "inivtado"],
+            enum: ["user", "autonomo", "invitado"],
             default: "user"
         },
         nombre: {
@@ -59,12 +58,21 @@ const UsersModel = new mongoose.Schema(
         },
         logo: {
             type: String
-        }
+        },
         //deleted: {
         //    type: Boolean,
         //    default: false,
         //    select: false
         //}
+        
+        resetPasswordToken: { type: String, select: false },
+        resetPasswordExpires: { type: Date, select: false },
+ 
+        
+        invitationToken: { type: String, select: false },
+        invitationExpires: { type: Date, select: false },
+        invitedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users', select: false } // Optional: Track inviter
+ 
     },
     {
         timestamps: true,

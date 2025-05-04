@@ -68,10 +68,63 @@ const validatorCompany = [
     (req, res, next) => validateResults(req, res, next)
 ];
 
+const validatorForgotPassword = [
+    check("email")
+        .exists().withMessage("EMAIL_REQUIRED")
+        .isEmail().withMessage("EMAIL_INVALID_FORMAT"),
+    (req, res, next) => validateResults(req, res, next)
+];
+
+const validatorResetPassword = [
+    check("token") // Assuming token is in the body for this example
+        .exists().withMessage("TOKEN_REQUIRED")
+        .notEmpty().withMessage("TOKEN_CANNOT_BE_EMPTY")
+        .isHexadecimal().withMessage("TOKEN_INVALID_FORMAT") // Basic check
+        .isLength({ min: 40, max: 40 }).withMessage("TOKEN_INVALID_LENGTH"), // Based on crypto.randomBytes(20)
+    check("password")
+        .exists().withMessage("PASSWORD_REQUIRED")
+        .isLength({ min: 8 }).withMessage("PASSWORD_MIN_8_CHARS"),
+    (req, res, next) => validateResults(req, res, next)
+];
+
+const validatorInvite = [
+    check("email") // Email of the person being invited
+        .exists().withMessage("EMAIL_REQUIRED")
+        .isEmail().withMessage("EMAIL_INVALID_FORMAT")
+        .custom(async (email = '') => {
+            // Check if invitee email already exists and is active
+            const existingUser = await usersModel.findOne({ email: email /*, status: true */ }); // Check if email exists at all for now
+            if (existingUser) {
+                // Decide how to handle: Error? Allow re-invite?
+                throw new Error("EMAIL_ALREADY_REGISTERED");
+            }
+            return true;
+        }),
+    (req, res, next) => validateResults(req, res, next)
+];
+
+const validatorAcceptInvitation = [
+    check("token") // Assuming token is in the body
+        .exists().withMessage("TOKEN_REQUIRED")
+        .notEmpty().withMessage("TOKEN_CANNOT_BE_EMPTY")
+        .isHexadecimal().withMessage("TOKEN_INVALID_FORMAT")
+        .isLength({ min: 40, max: 40 }).withMessage("TOKEN_INVALID_LENGTH"),
+    check("password")
+        .exists().withMessage("PASSWORD_REQUIRED")
+        .isLength({ min: 8 }).withMessage("PASSWORD_MIN_8_CHARS"),
+    check("name").optional().isString().notEmpty(), // Optional: Allow setting name on accept
+    check("surnames").optional().isString().notEmpty(), // Optional: Allow setting surnames on accept
+    (req, res, next) => validateResults(req, res, next)
+];
+
 module.exports = {
     validatorRegister,
     validatorLogin,
     validatorVerify,
     validatorUpdatePersonal,
-    validatorCompany
+    validatorCompany,
+    validatorForgotPassword,
+    validatorResetPassword,
+    validatorInvite,
+    validatorAcceptInvitation
 };
