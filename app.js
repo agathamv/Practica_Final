@@ -18,6 +18,8 @@ app.use("/api/user", require("./routes/users"));
 
 app.use("/api/client", require("./routes/clients")); 
 
+app.use("/api/project", require("./routes/projects"));
+
 app.use((req, res, next) => {
     handleHttpError(res, "ROUTE_NOT_FOUND", 404);
 });

@@ -1,3 +1,14 @@
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM4NDQwMywiZXhwIjoxNzQ2MzkxNjAzfQ.yN-XLZZZvzGgYm4m-suN19b3yTFi2qgMEUhZWR1pqEE
+@clientIdForProject = 681755d6d0cabd1f9ee5c3be
+@projectId = 6817b700c0e530c39de30887
+
+
+###
+# =================================
+# === USER ===
+# =================================
+###
+
 ### registrar un nuevo usuario
 POST http://localhost:4000/api/user/register
 Content-Type: application/json
@@ -142,10 +153,16 @@ Content-Type: application/json
 
 ###}
 
+###
+# =================================
+# === CLIENT ===
+# =================================
+###
+
 ### Cliente nuevo
 POST http://localhost:4000/api/client
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 {
     "name": "Tech Solutions Inc.",
@@ -162,7 +179,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4Y
 ### Cliente nuevo (diferente CIF)
 POST http://localhost:4000/api/client
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 {
   "name": "Innovate Systems",
@@ -180,7 +197,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4Y
 ### Intento de crear cliente duplicado (mismo CIF para el mismo usuario) - Debería fallar (409)
 POST http://localhost:4000/api/client
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 {
   "name": "Tech Solutions Inc. Duplicate Attempt",
@@ -197,18 +214,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4Y
 
 ### Todos los clientes de un usuario
 GET http://localhost:4000/api/client
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 
 ### Un cliente específico por ID
 GET http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 
 ### Actualizar un cliente por id cliente
 PUT http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 {
   "name": "Tech Solutions Inc. (Updated Name)",
@@ -225,21 +242,180 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4Y
 
 ### Soft Delete un cliente
 DELETE http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 
 ### todos los clientes archivados de un usuario
 GET http://localhost:4000/api/client/archived
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 
 
 ### restaurar un cliente archivado
 PATCH http://localhost:4000/api/client/681755d6d0cabd1f9ee5c3be/restore
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
 
 
 
 ### Hard Delete de un cliente
 DELETE http://localhost:4000/api/client/681755efd0cabd1f9ee5c3c2?hard=true
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM1OTc1MiwiZXhwIjoxNzQ2MzY2OTUyfQ.49dTqRCKZ16njmHg38e783im8c80ImtyQFte9jxlOy0
+Authorization: {{authToken}}
+
+
+###
+# =================================
+# === PROJECT ===
+# =================================
+###
+
+###Nuevo Proyecto
+POST http://localhost:4000/api/project
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+    "name": "Renovación Oficinas Centrales",
+    "projectCode": "OFC-MAD-001",
+    "clientId": "{{clientIdForProject}}",
+    "code": "INT-045",
+    "address": {
+        "street": "Gran Vía",
+        "number": "1",
+        "postal": "28013",
+        "city": "Madrid",
+        "province": "Madrid"
+    },
+    "begin": "2025-06-01",
+    "end": "2025-12-31",
+    "notes": "Fase inicial de planificación."
+}
+
+
+### Nuevo proyecto (mismo cliente)
+POST http://localhost:4000/api/project
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "name": "Ampliación Almacén",
+  "projectCode": "ALM-BCN-003",
+  "clientId": "{{clientIdForProject}}",
+  "code": "INT-046",
+  "address": {
+    "street": "Diagonal",
+    "number": "200",
+    "postal": "08018",
+    "city": "Barcelona",
+    "province": "Barcelona"
+  }
+}
+
+### intento de crear proyecto duplicado (mismo cliente y mismo código de proyecto)
+POST http://localhost:4000/api/project
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "name": "Renovación Oficinas Duplicado",
+  "projectCode": "OFC-MAD-001",
+  "clientId": "{{clientIdForProject}}",
+  "code": "INT-045-DUP"
+}
+
+
+### todos los proyectos de un usuario
+GET http://localhost:4000/api/project
+Authorization: {{authToken}}
+
+
+### todos los proyectos de un cliente
+GET http://localhost:4000/api/project/{{clientIdForProject}}
+Authorization: {{authToken}}
+
+
+### mostrar un proyecto por su id
+GET http://localhost:4000/api/project/one/{{projectId}}
+Authorization: {{authToken}}
+
+
+### mostrar un proyecto por su id y su id de cliente
+GET http://localhost:4000/api/project/{{clientIdForProject}}/{{projectId}}
+Authorization: {{authToken}}
+
+
+### Actualizar un proyecto por su id
+PUT http://localhost:4000/api/project/{{projectId}}
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+    "name": "Renovación Oficinas Centrales (Fase 2)",
+    "notes": "Actualización de notas. Planos aprobados.",
+    "code": "INT-045-REV1"
+}
+
+### Actualizar los precios de un proyecto
+PATCH http://localhost:4000/api/project/prices/{{projectId}}
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+    "prices": [
+        {
+            "format": "material",
+            "unit": "m2",
+            "concept": "Suelo Técnico Elevado",
+            "price": 45.00
+        },
+        {
+            "format": "hours",
+            "unit": "hr",
+            "concept": "Instalación Red Datos",
+            "price": 55.00
+        }
+    ]
+}
+
+
+### actualizar el amount de un proyecto
+PATCH http://localhost:4000/api/project/amount/{{projectId}}
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "amount": 15750
+}
+
+
+### activate / deactivate un proyecto
+PATCH http://localhost:4000/api/project/activate/{{projectId}}
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "active": false
+}
+
+
+### Soft Delete un proyecto
+DELETE http://localhost:4000/api/project/{{projectId}}
+Authorization: {{authToken}}
+
+
+### mostrar todos los proyectos archivados de un usuario
+GET http://localhost:4000/api/project/archive
+Authorization: {{authToken}}
+
+
+### mostrar todos los proyectos archivados de un cliente
+GET http://localhost:4000/api/project/archive/{{clientIdForProject}}
+Authorization: {{authToken}}
+
+
+### restaurar un proyecto archivado
+PATCH http://localhost:4000/api/project/restore/{{projectId}}
+Authorization: {{authToken}}
+
+### hard Delete de un proyecto
+DELETE http://localhost:4000/api/project/{{projectId}}?hard=true
+Authorization: {{authToken}}
