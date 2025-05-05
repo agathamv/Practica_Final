@@ -350,7 +350,7 @@ Content-Type: application/json
 Authorization: {{authToken}}
 
 {
-    "name": "Renovación Oficinas Centrales (Fase 3)",
+    "name": "Renovación Oficinas Centrales (Fase 4)",
     "notes": "Actualización de notas. Planos aprobados.",
     "code": "INT-045-REV1"
 }
