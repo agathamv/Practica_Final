@@ -3,24 +3,17 @@ const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('../middlewares/authMiddleware'); // Ajustar path
 
-const {mongoIdValidator, validatorCreateProject, validatorUpdateProject, validatorGetProjectsQuery, validatorGetProjectsByClient, validatorGetProjectByIdQuery, validatorGetProjectByClientAndId, validatorActivateProject, validatorUpdatePrices, validatorUpdateAmount} = require('../validators/projects'); 
-const {createProjectCtrl, getProjectsCtrl, getProjectsByClientCtrl, getProjectByIdSimpleCtrl, getProjectByClientAndIdCtrl, updateProjectCtrl, deleteProjectCtrl, archiveProjectCtrl, getArchivedProjectsCtrl, getArchivedProjectsByClientCtrl, restoreProjectCtrl, activateProjectCtrl, updatePricesCtrl, updateAmountCtrl} = require('../controllers/projects');
+const {mongoIdValidator, validatorCreateProject, validatorUpdateProject, validatorGetProjectsQuery, validatorGetProjectsByClient, validatorGetProjectByIdQuery, validatorGetProjectByClientAndId} = require('../validators/projects'); 
+const {createProjectCtrl, getProjectsCtrl, getProjectsByClientCtrl, getProjectByIdSimpleCtrl, getProjectByClientAndIdCtrl, updateProjectCtrl, deleteProjectCtrl, archiveProjectCtrl, getArchivedProjectsCtrl, getArchivedProjectsByClientCtrl, restoreProjectCtrl} = require('../controllers/projects');
 
 router.use(authMiddleware);
 
 
-// Rutas de Archivado y Restauración (antes de rutas con /:id general)
 router.get("/archive", getArchivedProjectsCtrl); // GET /api/project/archive
 router.get("/archive/:client", mongoIdValidator('client'), getArchivedProjectsByClientCtrl); // GET /api/project/archive/:client
 router.delete("/archive/:id", mongoIdValidator('id'), archiveProjectCtrl); // DELETE /api/project/archive/:id (Soft Delete)
 router.patch("/restore/:id", mongoIdValidator('id'), restoreProjectCtrl); // PATCH /api/project/restore/:id
 
-// Ruta de Activación
-router.patch("/activate/:id", validatorActivateProject, activateProjectCtrl); // PATCH /api/project/activate/:id
-
-// Rutas de Precios y Monto
-router.patch("/prices/:id", mongoIdValidator('id'), validatorUpdatePrices, updatePricesCtrl); // PATCH /api/project/prices/:id (Validador de body separado)
-router.patch("/amount/:id", mongoIdValidator('id'), validatorUpdateAmount, updateAmountCtrl); // PATCH /api/project/amount/:id (Validador de body separado)
 
 // Ruta para obtener un proyecto específico (simple)
 router.get("/one/:id", validatorGetProjectByIdQuery, getProjectByIdSimpleCtrl); // GET /api/project/one/:id (Validador incluye query)

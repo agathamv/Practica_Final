@@ -68,28 +68,6 @@ const validatorGetProjectByClientAndId = [
     (req, res, next) => validateResults(req, res, next)
 ];
 
-const validatorActivateProject = [
-    ...mongoIdValidator('id'),
-    check("active")
-        .exists().withMessage('ACTIVE_STATUS_REQUIRED')
-        .isBoolean().withMessage('ACTIVE_STATUS_MUST_BE_BOOLEAN'),
-    (req, res, next) => validateResults(req, res, next)
-];
 
-const validatorUpdatePrices = [
-    ...mongoIdValidator('id'),
-    check("prices").exists().isArray({ min: 1 }).withMessage('PRICES_ARRAY_REQUIRED_AND_NON_EMPTY'),
-    check("prices.*.format").exists().isIn(['material', 'hours']).withMessage('INVALID_PRICE_FORMAT'),
-    check("prices.*.unit").optional().isString(), 
-    check("prices.*.concept").exists().notEmpty().isString(),
-    check("prices.*.price").exists().isNumeric({ no_symbols: true }).toFloat().isFloat({ min: 0 }),
-    (req, res, next) => validateResults(req, res, next)
-];
 
-const validatorUpdateAmount = [
-    ...mongoIdValidator('id'),
-    check("amount").exists().isNumeric({ no_symbols: true }).toFloat().isFloat({ min: 0 }),
-    (req, res, next) => validateResults(req, res, next)
-];
-
-module.exports = {mongoIdValidator, validatorCreateProject, validatorUpdateProject, validatorGetProjectsQuery, validatorGetProjectsByClient, validatorGetProjectByIdQuery, validatorGetProjectByClientAndId, validatorActivateProject, validatorUpdatePrices, validatorUpdateAmount};
+module.exports = {mongoIdValidator, validatorCreateProject, validatorUpdateProject, validatorGetProjectsQuery, validatorGetProjectsByClient, validatorGetProjectByIdQuery, validatorGetProjectByClientAndId};

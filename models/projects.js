@@ -9,13 +9,6 @@ const AddressSchema = new mongoose.Schema({
     province: { type: String }
 }, { _id: false });
 
-const PriceSchema = new mongoose.Schema({
-    format: { type: String, enum: ['material', 'hours'], required: true }, 
-    unit: { type: String },
-    concept: { type: String, required: true },
-    price: { type: Number, required: true, min: 0 }
-}, { _id: false });
-
 
 const ProjectSchema = new mongoose.Schema(
     {
@@ -49,20 +42,7 @@ const ProjectSchema = new mongoose.Schema(
         },
         begin: { type: String }, 
         end: { type: String },
-        notes: { type: String, trim: true },
-        isActive: {
-            type: Boolean,
-            default: true 
-        },
-        unitPrices: {
-            type: [PriceSchema],
-            default: []
-        },
-        amount: {
-            type: Number,
-            min: 0,
-            default: null
-        }
+        notes: { type: String, trim: true }
     },
     {
         timestamps: true, 

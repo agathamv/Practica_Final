@@ -20,6 +20,8 @@ app.use("/api/client", require("./routes/clients"));
 
 app.use("/api/project", require("./routes/projects"));
 
+app.use("/api/deliverynote", require("./routes/deliveryNotes"));
+
 app.use((req, res, next) => {
     handleHttpError(res, "ROUTE_NOT_FOUND", 404);
 });

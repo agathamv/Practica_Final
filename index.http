@@ -1,6 +1,7 @@
-@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjM4NDQwMywiZXhwIjoxNzQ2MzkxNjAzfQ.yN-XLZZZvzGgYm4m-suN19b3yTFi2qgMEUhZWR1pqEE
-@clientIdForProject = 681755d6d0cabd1f9ee5c3be
-@projectId = 6817b700c0e530c39de30887
+@authToken = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE2OWE4YTU0YWFmOWM1YzIwMjJjYjciLCJyb2xlIjoidXNlciIsImlhdCI6MTc0NjQ2MDc1OCwiZXhwIjoxNzQ2NDY3OTU4fQ.YTQ_AzjrtxoK_Z_uG56BoZHraz-g-Y86XfB2lkefBso
+@clientId = 681755d6d0cabd1f9ee5c3be
+@projectId = 6817b8c5c0e530c39de3088c
+@deliveryNoteId = 6818e0934db19770d1b924b4
 
 
 ###
@@ -276,7 +277,7 @@ Authorization: {{authToken}}
 {
     "name": "Renovación Oficinas Centrales",
     "projectCode": "OFC-MAD-001",
-    "clientId": "{{clientIdForProject}}",
+    "clientId": "{{clientId}}",
     "code": "INT-045",
     "address": {
         "street": "Gran Vía",
@@ -299,7 +300,7 @@ Authorization: {{authToken}}
 {
   "name": "Ampliación Almacén",
   "projectCode": "ALM-BCN-003",
-  "clientId": "{{clientIdForProject}}",
+  "clientId": "{{clientId}}",
   "code": "INT-046",
   "address": {
     "street": "Diagonal",
@@ -318,7 +319,7 @@ Authorization: {{authToken}}
 {
   "name": "Renovación Oficinas Duplicado",
   "projectCode": "OFC-MAD-001",
-  "clientId": "{{clientIdForProject}}",
+  "clientId": "{{clientId}}",
   "code": "INT-045-DUP"
 }
 
@@ -329,7 +330,7 @@ Authorization: {{authToken}}
 
 
 ### todos los proyectos de un cliente
-GET http://localhost:4000/api/project/{{clientIdForProject}}
+GET http://localhost:4000/api/project/{{clientId}}
 Authorization: {{authToken}}
 
 
@@ -339,7 +340,7 @@ Authorization: {{authToken}}
 
 
 ### mostrar un proyecto por su id y su id de cliente
-GET http://localhost:4000/api/project/{{clientIdForProject}}/{{projectId}}
+GET http://localhost:4000/api/project/{{clientId}}/{{projectId}}
 Authorization: {{authToken}}
 
 
@@ -349,53 +350,10 @@ Content-Type: application/json
 Authorization: {{authToken}}
 
 {
-    "name": "Renovación Oficinas Centrales (Fase 2)",
+    "name": "Renovación Oficinas Centrales (Fase 3)",
     "notes": "Actualización de notas. Planos aprobados.",
     "code": "INT-045-REV1"
 }
-
-### Actualizar los precios de un proyecto
-PATCH http://localhost:4000/api/project/prices/{{projectId}}
-Content-Type: application/json
-Authorization: {{authToken}}
-
-{
-    "prices": [
-        {
-            "format": "material",
-            "unit": "m2",
-            "concept": "Suelo Técnico Elevado",
-            "price": 45.00
-        },
-        {
-            "format": "hours",
-            "unit": "hr",
-            "concept": "Instalación Red Datos",
-            "price": 55.00
-        }
-    ]
-}
-
-
-### actualizar el amount de un proyecto
-PATCH http://localhost:4000/api/project/amount/{{projectId}}
-Content-Type: application/json
-Authorization: {{authToken}}
-
-{
-  "amount": 15750
-}
-
-
-### activate / deactivate un proyecto
-PATCH http://localhost:4000/api/project/activate/{{projectId}}
-Content-Type: application/json
-Authorization: {{authToken}}
-
-{
-  "active": false
-}
-
 
 ### Soft Delete un proyecto
 DELETE http://localhost:4000/api/project/{{projectId}}
@@ -408,7 +366,7 @@ Authorization: {{authToken}}
 
 
 ### mostrar todos los proyectos archivados de un cliente
-GET http://localhost:4000/api/project/archive/{{clientIdForProject}}
+GET http://localhost:4000/api/project/archive/{{clientId}}
 Authorization: {{authToken}}
 
 
@@ -419,3 +377,82 @@ Authorization: {{authToken}}
 ### hard Delete de un proyecto
 DELETE http://localhost:4000/api/project/{{projectId}}?hard=true
 Authorization: {{authToken}}
+
+
+###
+# =================================
+# === ALBARANES ===
+# =================================
+###
+
+### creando un nuevo albarán de horas
+POST http://localhost:4000/api/deliverynote
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "clientId": "{{clientId}}",
+  "projectId": "{{projectId}}",
+  "format": "hours",
+  "hours": 6,
+  "description": "Trabajos de consultoría técnica.",
+  "workdate": "2025-05-10T00:00:00.000Z"
+}
+
+### creando un nuevo albarán de material
+POST http://localhost:4000/api/deliverynote
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "clientId": "{{clientId}}",
+  "projectId": "{{projectId}}",
+  "format": "material",
+  "quantity": 15,
+  "description": "Sacos de Cemento Portland",
+  "workdate": "2025-05-11T00:00:00.000Z"
+}
+
+
+### todos los albaranes de un usuario
+GET http://localhost:4000/api/deliverynote
+Authorization: {{authToken}}
+
+
+### mostrar un albaran por id
+GET http://localhost:4000/api/deliverynote/{{deliveryNoteId}}
+Authorization: {{authToken}}
+
+
+
+### descargar un albarán en PDF
+GET http://localhost:4000/api/deliverynote/pdf/{{deliveryNoteId}}
+Authorization: {{authToken}}
+
+
+### firmar un albarán
+PATCH http://localhost:4000/api/deliverynote/sign/{{deliveryNoteId}}
+Authorization: {{authToken}}
+Content-Type: multipart/form-data; boundary=boundarysign
+
+--boundarysign
+Content-Disposition: form-data; name="sign"; filename="firma.png"
+Content-Type: image/png
+
+< ./firma.png
+--boundarysign--
+
+
+
+### verificar la firma de un albarán
+GET http://localhost:4000/api/deliverynote/{{deliveryNoteId}}
+Authorization: {{authToken}}
+
+
+### eliminar un albarán
+DELETE http://localhost:4000/api/deliverynote/{{deliveryNoteId}}?hard=true
+Authorization: {{authToken}}
+
+
+
+
