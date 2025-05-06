@@ -1,4 +1,4 @@
-// test/users.test.js
+
 const request = require('supertest');
 const mongoose = require('mongoose');
 const fs = require('fs');
@@ -460,3 +460,4 @@ afterAll(async () => {
   console.log("Usuarios de prueba finales eliminados.");
   await mongoose.connection.close();
 });
+
