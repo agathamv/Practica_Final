@@ -243,7 +243,7 @@ const signDeliveryNoteCtrl = async (req, res) => {
         let signatureIpfsUrl = null;
         try {
             const signatureBuffer = req.file.buffer; 
-            const fileName = `signature_${id}_${Date.now()}_${req.file.originalname}`; // Create unique filename
+            const fileName = `signature_${id}_${Date.now()}_${req.file.originalname}`; 
 
             console.log(`Uploading signature file [${req.file.originalname}] for ${id} to IPFS...`);
             const ipfsResponse = await uploadToPinata(signatureBuffer, fileName);
@@ -252,7 +252,7 @@ const signDeliveryNoteCtrl = async (req, res) => {
                  throw new Error("IPFS upload failed or did not return hash.");
             }
 
-            signatureIpfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsResponse.IpfsHash}`; // Adjust gateway if needed
+            signatureIpfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsResponse.IpfsHash}`; 
             console.log(`Signature uploaded to IPFS: ${signatureIpfsUrl}`);
 
         } catch (uploadError) {
@@ -266,7 +266,7 @@ const signDeliveryNoteCtrl = async (req, res) => {
 
         res.status(200).json({
              message: "DELIVERY_NOTE_SIGNED_SUCCESSFULLY",
-             signUrl: note.sign // Return the IPFS URL
+             signUrl: note.sign 
         });
 
     } catch (err) {

@@ -30,7 +30,7 @@ const options = {
                 }
             },
             schemas: {
-                User: { // Schema for user object in responses (no password)
+                User: { 
                     type: 'object',
                     properties: {
                       _id: { type: 'string', format: 'ObjectId', readOnly: true, example: '668a1b...' },
@@ -41,7 +41,7 @@ const options = {
                       nombre: { type: 'string', nullable: true },
                       apellidos: { type: 'string', nullable: true },
                       nif: { type: 'string', nullable: true },
-                      company: { $ref: '#/components/schemas/Company', nullable: true }, // Reference full Company
+                      company: { $ref: '#/components/schemas/Company', nullable: true }, 
                       logo: { type: 'string', format: 'url', nullable: true },
                       createdAt: { type: 'string', format: 'date-time', readOnly: true },
                       updatedAt: { type: 'string', format: 'date-time', readOnly: true }
@@ -72,7 +72,7 @@ const options = {
                     nif: { type: 'string', pattern: '^\\d{8}[A-Z]$', example: '12345678Z' }
                   }
                 },
-                UserResponse: { // Schema for user object in responses (no password)
+                UserResponse: { 
                   type: 'object',
                   properties: {
                     _id: { type: 'string', format: 'ObjectId', readOnly: true, example: '668a1b...' },
@@ -82,7 +82,7 @@ const options = {
                     nombre: { type: 'string', nullable: true },
                     apellidos: { type: 'string', nullable: true },
                     nif: { type: 'string', nullable: true },
-                    company: { $ref: '#/components/schemas/Company', nullable: true }, // Reference full Company
+                    company: { $ref: '#/components/schemas/Company', nullable: true }, 
                     logo: { type: 'string', format: 'url', nullable: true },
                     createdAt: { type: 'string', format: 'date-time', readOnly: true },
                     updatedAt: { type: 'string', format: 'date-time', readOnly: true }
@@ -95,7 +95,7 @@ const options = {
                         user: { $ref: '#/components/schemas/UserResponse' }
                     }
                 },
-                Company: { // Full Company object (as in DB/response)
+                Company: { 
                   type: 'object',
                   properties: {
                     nombre: { type: 'string', nullable: true },
@@ -107,7 +107,7 @@ const options = {
                     province: { type: 'string', nullable: true }
                   }
                 },
-                CompanyInput: { // Company object for input/update
+                CompanyInput: { 
                   type: 'object',
                   properties: {
                     nombre: { type: 'string', example: 'Mi Empresa SL' },
@@ -119,7 +119,7 @@ const options = {
                     province: { type: 'string', example: 'Madrid' }
                   }
                 },
-                Address: { // Reusable Address schema
+                Address: { 
                    type: 'object',
                    properties: {
                      street: { type: 'string', nullable: true },
@@ -130,7 +130,7 @@ const options = {
                    }
                 },
         
-                // --- Client Schemas ---
+                
                 ClientInput: {
                     type: 'object',
                     required: ['name', 'cif'],
@@ -140,8 +140,8 @@ const options = {
                         address: { $ref: '#/components/schemas/Address', nullable: true }
                     }
                 },
-                Client: { // Client object in responses
-                    allOf: [ // Inherit from ClientInput
+                Client: { 
+                    allOf: [ 
                         { $ref: '#/components/schemas/ClientInput' }
                     ],
                     type: 'object',
@@ -150,12 +150,11 @@ const options = {
                         userId: { type: 'string', format: 'ObjectId', readOnly: true },
                         createdAt: { type: 'string', format: 'date-time', readOnly: true },
                         updatedAt: { type: 'string', format: 'date-time', readOnly: true },
-                        deleted: { type: 'boolean', readOnly: true, nullable: true }, // From mongoose-delete
-                        deletedAt: { type: 'string', format: 'date-time', readOnly: true, nullable: true } // From mongoose-delete
+                        deleted: { type: 'boolean', readOnly: true, nullable: true }, 
+                        deletedAt: { type: 'string', format: 'date-time', readOnly: true, nullable: true } 
                     }
                 },
         
-                // --- Project Schemas ---
                 ProjectInput: {
                     type: 'object',
                     required: ['name', 'clientId'],
@@ -170,7 +169,7 @@ const options = {
                         notes: { type: 'string', example: 'Notas iniciales del proyecto.', nullable: true },
                     }
                 },
-                Project: { // Project object in responses
+                Project: { 
                     allOf: [
                         { $ref: '#/components/schemas/ProjectInput' }
                     ],
@@ -185,8 +184,8 @@ const options = {
                     }
                 },
         
-                // --- DeliveryNote Schemas ---
-                DeliveryNoteInput: { // Simple V1 Create
+                
+                DeliveryNoteInput: { 
                      type: 'object',
                      required: ['clientId', 'projectId', 'format', 'workdate', 'description'],
                      properties: {
@@ -197,22 +196,22 @@ const options = {
                          quantity: { type: 'number', format: 'float', minimum: 0, nullable: true, description: 'Required if format=material' },
                          description: { type: 'string', description: 'Main description or material name' },
                          workdate: { type: 'string', format: 'date-time', example: '2025-05-10T10:00:00Z' },
-                         // Add optional fields if needed in create
+                         
                      }
                 },
-                DeliveryNote: { // DeliveryNote object in responses
+                DeliveryNote: { 
                     type: 'object',
                     properties: {
                          _id: { type: 'string', format: 'ObjectId', readOnly: true },
                          userId: { type: 'string', format: 'ObjectId', readOnly: true },
-                         clientId: { type: 'string', format: 'ObjectId' }, // Or populated object $ref:'#/components/schemas/Client'
-                         projectId: { type: 'string', format: 'ObjectId' }, // Or populated object $ref:'#/components/schemas/Project'
-                         format: { type: 'string', enum: ['hours', 'material', 'any', 'multi'] }, // Include all possible formats
+                         clientId: { type: 'string', format: 'ObjectId' }, 
+                         projectId: { type: 'string', format: 'ObjectId' }, 
+                         format: { type: 'string', enum: ['hours', 'material', 'any', 'multi'] }, 
                          hours: { type: 'number', nullable: true },
                          quantity: { type: 'number', nullable: true },
                          description: { type: 'string', nullable: true },
                          descriptionId: { type: 'string', format: 'ObjectId', nullable: true },
-                         items: { // Renamed from 'multi'/'materials' etc. for consistency in model
+                         items: { 
                             type: 'array',
                             items: { $ref: '#/components/schemas/DeliveryNoteItem' }
                          },
@@ -231,17 +230,17 @@ const options = {
                          deletedAt: { type: 'string', format: 'date-time', readOnly: true, nullable: true }
                     }
                 },
-                DeliveryNoteItem: { // Schema for items array in DeliveryNote
+                DeliveryNoteItem: { 
                      type: 'object',
                      properties: {
                         _id: { type: 'string', format: 'ObjectId', readOnly: true },
                          description: { type: 'string' },
                          quantity: { type: 'number', nullable: true },
                          hours: { type: 'number', nullable: true },
-                         // Add unit, price, conceptId etc. if needed
+                         
                      }
                 },
-                SignInput: { // Input for signing endpoint
+                SignInput: { 
                     type: 'object',
                     required: ['sign'],
                     properties: {
@@ -249,7 +248,7 @@ const options = {
                     }
                 },
         
-                // --- Generic Responses ---
+                
                 AckResponse: {
                      type: 'object',
                      properties: {
@@ -267,7 +266,7 @@ const options = {
                     type: 'object',
                     properties: {
                         message: { type: 'string', description: 'Error description', example: 'RESOURCE_NOT_FOUND' },
-                        // You might have an 'errors' array for validation errors
+                        
                         errors: {
                             type: 'array',
                             items: {

@@ -343,7 +343,7 @@ const resetPasswordCtrl = async (req, res) => {
         });
 
         if (!user) {
-            return handleHttpError(res, "PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED", 400); // Use 400 Bad Request
+            return handleHttpError(res, "PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED", 400); 
         }
 
         

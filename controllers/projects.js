@@ -1,10 +1,9 @@
-// controllers/projects.js
 const { matchedData } = require("express-validator");
 const { projectsModel, clientsModel } = require("../models"); 
 const { handleHttpError } = require("../utils/handleError");
 const mongoose = require('mongoose'); 
 
-/** Helper para verificar si el usuario es dueño del cliente */
+
 const checkClientOwnership = async (userId, clientId) => {
     if (!clientId || !mongoose.Types.ObjectId.isValid(clientId)) return false; 
     const client = await clientsModel.findOne({ _id: clientId, userId: userId });
@@ -101,7 +100,7 @@ const getProjectByIdSimpleCtrl = async (req, res) => {
     }
 };
 
-/** Obtener Proyecto Único por Cliente y ID: GET /{client}/{id} */
+
 const getProjectByClientAndIdCtrl = async (req, res) => {
      try {
         const userId = req.user._id;
@@ -127,7 +126,7 @@ const updateProjectCtrl = async (req, res) => {
      try {
         const userId = req.user._id;
         const { id } = matchedData(req, { locations: ['params'] });
-        const updateData = matchedData(req, { includeOptionals: false }); // No incluir opcionales vacíos
+        const updateData = matchedData(req, { includeOptionals: false }); 
 
         if (updateData.clientId) {
              const clientOwned = await checkClientOwnership(userId, updateData.clientId);
@@ -135,13 +134,13 @@ const updateProjectCtrl = async (req, res) => {
         }
 
         if (updateData.projectCode || updateData.clientId) {
-            const currentProject = await projectsModel.findById(id).select('userId clientId projectCode'); // Optimizar selección
+            const currentProject = await projectsModel.findById(id).select('userId clientId projectCode'); 
             if(!currentProject || currentProject.userId.toString() !== userId) {
                 return handleHttpError(res, "PROJECT_NOT_FOUND_OR_NOT_AUTHORIZED", 404);
             }
 
             const checkClientId = updateData.clientId || currentProject.clientId;
-            const checkProjectCode = updateData.projectCode === null ? null : (updateData.projectCode || currentProject.projectCode); // Manejar explícitamente null si se permite
+            const checkProjectCode = updateData.projectCode === null ? null : (updateData.projectCode || currentProject.projectCode); 
 
             if(checkProjectCode) {
                 const conflictingProject = await projectsModel.findOne({
@@ -182,10 +181,10 @@ const deleteProjectCtrl = async (req, res) => {
     
         if (hardDelete) {
             await projectsModel.deleteOne({ _id: id });
-            res.status(200).json({ status: "OK", message: "PROJECT_PERMANENTLY_DELETED" }); // Devolver Status OK
+            res.status(200).json({ status: "OK", message: "PROJECT_PERMANENTLY_DELETED" }); 
         } else {
             await project.delete();
-            res.status(200).json({ status: "OK", message: "PROJECT_ARCHIVED_SOFT_DELETE" }); // Devolver Status OK
+            res.status(200).json({ status: "OK", message: "PROJECT_ARCHIVED_SOFT_DELETE" }); 
         }
 
     } catch (err) { 
@@ -194,7 +193,7 @@ const deleteProjectCtrl = async (req, res) => {
     }
 };
 
-/** Archivar Proyecto (Duplicado?): DELETE /archive/{id} */
+
 const archiveProjectCtrl = async (req, res) => {
      try {
         const userId = req.user._id;
@@ -202,7 +201,7 @@ const archiveProjectCtrl = async (req, res) => {
         const project = await projectsModel.findOne({ _id: id, userId });
         if (!project) return handleHttpError(res, "PROJECT_NOT_FOUND_OR_NOT_AUTHORIZED", 404);
         await project.delete();
-        res.status(200).json({ status: "OK", message: "PROJECT_ARCHIVED" }); // Devolver Status OK
+        res.status(200).json({ status: "OK", message: "PROJECT_ARCHIVED" }); 
     } catch (err) { 
         console.error("GET PROJECTS CTRL ERROR:", err);
         handleHttpError(res, "ERROR_GETTING_PROJECTS", 500); 
@@ -242,7 +241,7 @@ const restoreProjectCtrl = async (req, res) => {
         const projectToRestore = await projectsModel.findOneDeleted({ _id: id, userId });
         if (!projectToRestore) return handleHttpError(res, "ARCHIVED_PROJECT_NOT_FOUND_OR_NOT_AUTHORIZED", 404);
         await projectToRestore.restore();
-        res.status(200).json({message: "PROJECT_RESTORED_SUCCESSFULLY", project: projectToRestore }); // Devolver ACK
+        res.status(200).json({message: "PROJECT_RESTORED_SUCCESSFULLY", project: projectToRestore }); 
     } catch (err) { 
         console.error("GET PROJECTS CTRL ERROR:", err);
         handleHttpError(res, "ERROR_GETTING_PROJECTS", 500); 
