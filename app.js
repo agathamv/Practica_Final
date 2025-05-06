@@ -6,6 +6,9 @@ const { handleHttpError } = require('./utils/handleError');
 const morganBody = require("morgan-body")
 const {IncomingWebhook} = require("@slack/webhook")
 
+const swaggerUi = require("swagger-ui-express")
+const swaggerSpecs = require("./docs/swagger")
+
 const app = express();
 
 const webHook = new IncomingWebhook(process.env.SLACK_WEBHOOK)
@@ -31,6 +34,9 @@ dbConnect();
 app.use(cors());
 
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/user", require("./routes/users"));
@@ -50,7 +56,6 @@ app.use((err, req, res, next) => {
     console.error("UNHANDLED_ERROR:", err); 
     const statusCode = err.status || 500;
 
-    
     if (err.name === 'ValidationError') {
         
         return handleHttpError(res, err.message, 422); 
@@ -60,7 +65,6 @@ app.use((err, req, res, next) => {
         return handleHttpError(res, err.message || "ERROR", statusCode);
     }
 
-    
     handleHttpError(res, "INTERNAL_SERVER_ERROR", statusCode); 
 });
 
