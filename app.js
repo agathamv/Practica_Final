@@ -9,7 +9,18 @@ const {IncomingWebhook} = require("@slack/webhook")
 const swaggerUi = require("swagger-ui-express")
 const swaggerSpecs = require("./docs/swagger")
 
+
 const app = express();
+
+
+const dbUriToUse = process.env.NODE_ENV === 'test' ? process.env.DB_URI_TEST : process.env.DB_URI;
+if (dbUriToUse) {
+    dbConnect(dbUriToUse); // dbConnect ahora debe tomar la URI como argumento
+} else {
+    console.error("No se encontró DB_URI o DB_URI_TEST en las variables de entorno.");
+    process.exit(1);
+}
+
 
 const webHook = new IncomingWebhook(process.env.SLACK_WEBHOOK)
 
@@ -28,7 +39,7 @@ morganBody(app, {
     stream: loggerStream
 })
 
-dbConnect();
+
 
 
 app.use(cors());
@@ -69,7 +80,16 @@ app.use((err, req, res, next) => {
 });
 
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-    console.log(`Servidor escuchando en http://localhost:${port}`);
-});
+const PORT = process.env.PORT || 4000;
+
+
+module.exports = app; 
+
+if (process.env.NODE_ENV !== "test") {
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+}
+
+
+

@@ -57,8 +57,7 @@ const registerCtrl = async (req, res) => {
 const loginCtrl = async (req, res) => {
     try {
         const validatedData = matchedData(req);
-        const user = await usersModel.findOne({ email: validatedData.email })
-                                     .select('+password +status');
+        const user = await usersModel.findOneWithDeleted({ email: validatedData.email }).select('+password +status +deleted');
 
         if (!user) {
             return handleHttpError(res, "USER_NOT_FOUND", 404); 
@@ -69,8 +68,8 @@ const loginCtrl = async (req, res) => {
         }
 
          if (user.deleted) {
-             return handleHttpError(res, "USER_ACCOUNT_INACTIVE", 401); 
-         }
+            return handleHttpError(res, "USER_ACCOUNT_INACTIVE", 401); 
+        }
 
         const hashPassword = user.password;
         const check = await compare(validatedData.password, hashPassword);
@@ -265,14 +264,12 @@ const forgotPasswordCtrl = async (req, res) => {
         const user = await usersModel.findOne({ email: email, status: true }); // Find active user
 
         if (!user) {
-            // Security: Don't reveal if user exists. Send success response anyway.
             console.log(`Password reset requested for non-existent or inactive email: ${email}`);
             return res.status(200).json({ message: "PASSWORD_RESET_LINK_SENT_IF_ACCOUNT_EXISTS" });
         }
 
-        // Generate Token
         const resetToken = crypto.randomBytes(20).toString('hex');
-        const resetTokenExpires = Date.now() + 3600000; // 1 hour expiry
+        const resetTokenExpires = Date.now() + 3600000; 
 
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = resetTokenExpires;
@@ -280,16 +277,20 @@ const forgotPasswordCtrl = async (req, res) => {
 
         console.log(`Reset token generated and saved for user: ${user.email}`);
 
-        // Send Email (Replace with your actual frontend URL)
+        
         const resetUrl = `'http://localhost:4000'}/reset-password?token=${resetToken}`;
         
+        //No me funciona el email, lo simulo en consola
          // **** Log the URL to the Console Instead of Sending Email ****
          console.log("----- SIMULATED PASSWORD RESET EMAIL -----");
          console.log("To:", user.email);
          console.log("Reset URL:", resetUrl); // Log the full link
          console.log("Reset Token:", resetToken); // Log the token separately for easy copying
          console.log("------------------------------------------");
-        /*const emailOptions = {
+        
+        // ---- codigo para enviar el email
+
+         /*const emailOptions = {
             to: user.email,
             from: process.env.EMAIL || 'noreply@example.com', // Configure sender
             subject: 'Password Reset Request',
@@ -300,6 +301,7 @@ const forgotPasswordCtrl = async (req, res) => {
 
         res.status(200).json({ message: "PASSWORD_RESET_LINK_GENERATED_CHECK_CONSOLE_IF_EXISTS" });
 
+        // ---- codigo para enviar el email
         /*
         try {
             await sendEmail(emailOptions);
@@ -334,25 +336,21 @@ const resetPasswordCtrl = async (req, res) => {
     try {
         const { token, password } = matchedData(req);
 
-        // Find user by token and check expiry
+        
         const user = await usersModel.findOne({
             resetPasswordToken: token,
-            resetPasswordExpires: { $gt: Date.now() } // Check if expiry is in the future
+            resetPasswordExpires: { $gt: Date.now() }
         });
 
         if (!user) {
             return handleHttpError(res, "PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED", 400); // Use 400 Bad Request
         }
 
-        // Set the new password
+        
         user.password = await encrypt(password);
-        // Clear the reset token fields
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
-
-        // Optionally: Send a confirmation email
-        // await sendEmail(...)
 
         res.status(200).json({ message: "PASSWORD_RESET_SUCCESSFUL" });
 
@@ -366,25 +364,22 @@ const resetPasswordCtrl = async (req, res) => {
 
 const inviteGuestCtrl = async (req, res) => {
     try {
-        const { email: inviteeEmail } = matchedData(req); // Email of the person to invite
-        const inviter = req.user; // User sending the invitation (from authMiddleware)
+        const { email: inviteeEmail } = matchedData(req); 
+        const inviter = req.user; 
 
-        // Check if inviter has company data (adjust condition as needed)
-        if (!inviter.company || !inviter.company.cif) { // Example check
-            return handleHttpError(res, "INVITER_MUST_HAVE_COMPANY_INFO_TO_INVITE", 403); // Forbidden
+        
+        if (!inviter.company || !inviter.company.cif) { 
+            return handleHttpError(res, "INVITER_MUST_HAVE_COMPANY_INFO_TO_INVITE", 403);
         }
 
-        // Validator already checks if inviteeEmail exists. Handle error if it slips through.
         const existingUser = await usersModel.findOne({ email: inviteeEmail });
         if (existingUser) {
-             return handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409); // Conflict
+             return handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409); 
         }
 
-        // Generate Invitation Token
         const inviteToken = crypto.randomBytes(20).toString('hex');
-        const inviteTokenExpires = Date.now() + (3 * 24 * 3600000); // 3 days expiry? Configurable
+        const inviteTokenExpires = Date.now() + (3 * 24 * 3600000);
 
-        // Create the guest user document
         const guestUser = new usersModel({
             email: inviteeEmail,
             status: false, 
@@ -406,6 +401,8 @@ const inviteGuestCtrl = async (req, res) => {
         console.log("Accept URL:", acceptUrl);
         console.log("Invite Token:", inviteToken);
         console.log("--------------------------------------");
+
+        // ---- codigo para enviar el email
 
         /*
         const emailOptions = {
@@ -432,10 +429,10 @@ const inviteGuestCtrl = async (req, res) => {
 
     } catch (err) {
         console.error("INVITE GUEST CTRL ERROR:", err);
-         if (err.code === 11000) { // Handle potential race condition for duplicate email
-             handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409);
+         if (err.code === 11000) { 
+            handleHttpError(res, "EMAIL_ALREADY_REGISTERED", 409);
          } else {
-             handleHttpError(res, "ERROR_PROCESSING_INVITATION", 500);
+            handleHttpError(res, "ERROR_PROCESSING_INVITATION", 500);
          }
     }
 };
@@ -444,38 +441,35 @@ const inviteGuestCtrl = async (req, res) => {
 
 const acceptInvitationCtrl = async (req, res) => {
     try {
-        const { token, password, name, surnames } = matchedData(req); // Token and new password from body
-
-        // Find guest user by token and check expiry
+        const { token, password, name, surnames } = matchedData(req); 
         const guestUser = await usersModel.findOne({
             invitationToken: token,
             invitationExpires: { $gt: Date.now() }
-        }).select('+invitationToken +invitationExpires'); // Select fields for clearing
+        }).select('+invitationToken +invitationExpires'); 
 
         if (!guestUser) {
             return handleHttpError(res, "INVITATION_TOKEN_INVALID_OR_EXPIRED", 400);
         }
 
-        // Set password and activate user
         guestUser.password = await encrypt(password);
-        guestUser.status = true; // Activate the user
-        // Optionally update name/surnames if provided
+        guestUser.status = true; 
+        
         if (name) guestUser.nombre = name;
         if (surnames) guestUser.apellidos = surnames;
 
-        // Clear invitation fields
+        
         guestUser.invitationToken = undefined;
         guestUser.invitationExpires = undefined;
 
         await guestUser.save();
 
-        // Optional: Log the user in immediately by returning a JWT
+        
         const jwtToken = tokenSign({ _id: guestUser._id, role: guestUser.role });
 
         res.status(200).json({
              message: "INVITATION_ACCEPTED_SUCCESSFULLY",
-             token: jwtToken, // Send token for immediate login
-             user: guestUser.toJSON() // Send back user data (toJSON removes sensitive fields)
+             token: jwtToken, 
+             user: guestUser.toJSON() 
         });
 
     } catch (err) {

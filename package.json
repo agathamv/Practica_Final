@@ -4,8 +4,8 @@
   "description": "Web II Servidor Practica Parcial",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon app.js",
+    "test": "cross-env NODE_ENV=test jest --verbose"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +20,7 @@
     "express-validator": "^7.2.1",
     "googleapis": "^146.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.10.0",
+    "mongoose": "^8.14.1",
     "mongoose-delete": "^1.0.2",
     "morgan-body": "^2.6.9",
     "multer": "^1.4.5-lts.1",
@@ -29,5 +29,12 @@
     "pdfkit": "^0.17.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.20",
+    "supertest": "^7.1.0"
   }
 }

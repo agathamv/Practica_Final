@@ -1,12 +1,15 @@
 const mongoose = require('mongoose')
 
-const dbConnect = () => {
-    const db_uri = process.env.DB_URI;
-    console.log("Conectando a la BD:", db_uri);
+const dbConnect = (DB_URI) => {
+    if (!DB_URI) {
+        console.error("MONGO DB URI NOT PROVIDED!");
+        return;
+    }
+    console.log("Conectando a la BD:", DB_URI);
     mongoose.set('strictQuery', false);
 
     try{
-        mongoose.connect(db_uri);
+        mongoose.connect(DB_URI);
     }catch(error){
         console.err("Error conectando a la BD:", error);
     }
